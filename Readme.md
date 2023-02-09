@@ -4,7 +4,7 @@ The official implementation for ICLR23 paper "Energy-based Out-of-Distribution D
 
 ## What's news
 
-[2023.02.] We release the early version of our codes for reproducibility (more detailed info will be updated soon).
+[2023.02.09] We release the early version of our codes for reproducibility (more detailed info will be updated soon).
 
 ```bibtex
       @inproceedings{wu2023gnnsafe,
