@@ -4,7 +4,7 @@ The official implementation for ICLR23 paper "Energy-based Out-of-Distribution D
 
 ## What's news
 
-[2023.02.] We release the early version of our codes for reproducibility (more detailed info will be updated soon).
+[2023.02.09] We release the early version of our codes for reproducibility (more detailed info will be updated soon).
 
 ```bibtex
       @inproceedings{wu2023gnnsafe,
@@ -42,31 +42,25 @@ and the model is evaluated on ***unseen*** OOD data in test set (testing OOD dat
 For comprehensive evaluation, we introduce new benchmark settings for OOD detection on graphs. 
 For each dataset, following the above protocols, we create three data portions:
 
-- ***In-distribution data (IND)***: the data set used by traditional supervised learning. It is further split into training/validation/testing subsets (short as INDTr/INDVal/INDTe).
-The training subset is for computing the supervised loss training the classifier; the testing (resp. validation) subset is used for evaluating (resp. early-stopping)
-the classifier on the classification task. 
+- ***In-distribution data (IND)***: the data set used by traditional supervised learning. It is further split into training/validation/testing subsets (short as INDTr/INDVal/INDTe) for training and evaluation of the classifier.
 
 - ***OOD data for training (OODTr)***: the data set used as training OOD exposure and for computing the regularization loss for the OOD detector.
 
-- ***OOD data for testing (OODTe)***: the data set used for evaluating the OOD detection model. In specific, the evaluation is based on discriminating the in-distribution testing data
-and OOD testing data.
+- ***OOD data for testing (OODTe)***: the data set used for evaluating the OOD detection model. In specific, the evaluation is based on discriminating the INDTe and OODTe.
 
 Due to different properties of different datasets, we use different ways for splitting.
 
 - **Cora/Amazon/Coauthor** (standard dataset): Each of these datasets contain one single graph. We use the original data as IND, and follow the public splits for train/valid/test partition.
 As for OOD data, we modified the original dataset to obtain OODTr and OODTe, with three different ways:
 
-    - Structure manipulation: use all nodes in the original graph as IND
-    and adopt stochastic block model to randomly generate a graph for OOD data. The OODTr and OODTe are generated independently.
-    - Feature interpolation: use all nodes in the original graph as IND 
-    and adopt random interpolation to create node features for OOD data. The OODTr and OODTe are generated independently.
+    - Structure manipulation: adopt stochastic block model to randomly generate a graph for OOD data.
+    - Feature interpolation: use random interpolation to create node features for OOD data. 
     - Label leave-out: use nodes with partial classes as IND and leave out others for OODTr and OODTe.
 
 - **Twitch** (multi-graph dataset): This dataset contains multiple sub-graphs. We use subgraph DE as IND, subgraph EN as OODTr and subgraphs ES, FR, RU as OODTe.
-A recent work [1] shows that there exist significant distribution shifts among different sub-graphs, i.e., social networks from particular regions.
 
 - **Arxiv** (dataset with context info): This dataset is a single graph where each node has a time label, i.e., when the paper is published.
- We follow [1] using the time as context for splitting domains: papers before 2015 as IID, from 2016 to 2017 as OODTr, and in 2018/2019/2020 as OODTe
+ We follow [1] using the time as domain information for splitting nodes into IND, OODTr and OODTe.
 
 ## Model Implementation
 
@@ -85,9 +79,14 @@ Since our model is agnostic to specific GNN architectures, we implement various 
 
 ## How to run the code
 
-### Reproducing comparative results
+1. Install the required packages according to `requirements.txt`.
 
-The training and evaluation for all datasets in one run can be finished within 1 hour, which is convenient for model development and further research. 
+2. The datasets we used are publicly available from Pytorch Geometric and OGB Package, and will be automatically downloaded when running our training scripts.
+
+3. Follow the guidelines below for running the codes for different purposes.
+
+### Reproducing main results (Table 1 and 2)
+ 
 We provide the commands with hyper-parameters for all datasets in `GNNSafe/run.sh`. 
 For example, for Cora with structure manipulation as OOD, one can run the following scripts for training and evaluation of baseline ***MSP*** and our models.
 ```shell 
@@ -99,7 +98,7 @@ For example, for Cora with structure manipulation as OOD, one can run the follow
     python main.py --method gnnsafe --backbone gcn --dataset cora --ood_type structure --mode detect --use_bn --use_prop --use_reg --m_in -5 --m_out -1 --lamda 0.01 --device 1
 ```
 
-### Discussion results
+### Discussion results (Fig. 1, 2 and 3)
 
 Under the `GNNSafe` folder, we also release the scripts for hyper-parameter searching in `run_hyper_search.sh`, discussion on hyper-parameter sensitivity in `run_discuss.sh`,
 and obtain results for energy visualization (Fig. 1 in paper) in `run_visualize.sh`. The figure plot code is provided in `plot.ipynb`.
