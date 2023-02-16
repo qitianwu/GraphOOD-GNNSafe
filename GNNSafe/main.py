@@ -72,6 +72,12 @@ if args.method == 'msp':
     model = MSP(d, c, args).to(device)
 elif args.method == 'gnnsafe':
     model = GNNSafe(d, c, args).to(device)
+elif args.method == 'OE':
+    model = OE(d, c, args).to(device)
+elif args.method == "ODIN":
+    model = ODIN(d, c, args).to(device)
+elif args.method == "Mahalanobis":
+    model = Mahalanobis(d, c, args).to(device)
 
 ### loss function ###
 if args.dataset in ('proteins', 'ppi'): # multi-label binary classification
