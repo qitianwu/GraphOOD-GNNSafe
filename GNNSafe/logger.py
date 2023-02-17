@@ -95,7 +95,7 @@ class Logger_detect(object):
                 print(f'OOD Test {k+1} Final AUROC: {ood_result[argmin, k*3]:.2f}')
                 print(f'OOD Test {k+1} Final AUPR: {ood_result[argmin, k*3+1]:.2f}')
                 print(f'OOD Test {k+1} Final FPR95: {ood_result[argmin, k*3+2]:.2f}')
-            print(f'In Test Score: {test_score[argmin]:.2f}')
+            print(f'IND Test Score: {test_score[argmin]:.2f}')
         else:
             result = 100 * torch.tensor(self.results)
 
@@ -115,7 +115,6 @@ class Logger_detect(object):
 
             best_result = torch.tensor(best_results)
 
-            print(best_result.shape)
             if best_result.shape[0] == 1:
                 print(f'All runs:')
                 for k in range(ood_te_num):
@@ -126,7 +125,7 @@ class Logger_detect(object):
                     r = best_result[:, k * 3 + 2]
                     print(f'OOD Test {k + 1} Final FPR: {r.mean():.2f}')
                 r = best_result[:, -1]
-                print(f'In Test Score: {r.mean():.2f}')
+                print(f'IND Test Score: {r.mean():.2f}')
             else:
                 print(f'All runs:')
                 for k in range(ood_te_num):
@@ -137,7 +136,7 @@ class Logger_detect(object):
                     r = best_result[:, k*3+2]
                     print(f'OOD Test {k+1} Final FPR: {r.mean():.2f} ± {r.std():.2f}')
                 r = best_result[:, -1]
-                print(f'In Test Score: {r.mean():.2f} ± {r.std():.2f}')
+                print(f'IND Test Score: {r.mean():.2f} ± {r.std():.2f}')
 
             return best_result
 
@@ -149,9 +148,9 @@ def save_result(results, args):
 
     if args.method == 'gnnsafe':
         if args.use_prop:
-            name = 'gnnsafe_use_prop_use_reg' if args.use_reg else 'gnnsafe_use_prop_no_reg'
+            name = 'GNNSafe++' if args.use_reg else 'GNNSafe'
         else:
-            name = 'gnnsafe_no_prop_use_reg' if args.use_reg else 'gnnsafe_no_prop_no_reg'
+            name = 'Energy FT' if args.use_reg else 'Energy'
     else:
         name = args.method
 
@@ -177,7 +176,7 @@ def save_result(results, args):
                 write_obj.write(f'OOD Test Averaged Final AUPR: {np.mean(aupr):.2f} ')
                 write_obj.write(f'OOD Test Averaged Final FPR: {np.mean(fpr):.2f}\n')
             r = results[:, -1]
-            write_obj.write(f'In Test Score: {r.mean():.2f}\n')
+            write_obj.write(f'IND Test Score: {r.mean():.2f}\n')
         else: # more than one runs, return std
             for k in range(results.shape[1] // 3):
                 r = results[:, k * 3]
@@ -187,5 +186,5 @@ def save_result(results, args):
                 r = results[:, k * 3 + 2]
                 write_obj.write(f'OOD Test {k + 1} Final FPR: {r.mean():.2f} ± {r.std():.2f}\n')
             r = results[:, -1]
-            write_obj.write(f'In Test Score: {r.mean():.2f} ± {r.std():.2f}\n')
+            write_obj.write(f'IND Test Score: {r.mean():.2f} ± {r.std():.2f}\n')
         write_obj.write(f'\n')

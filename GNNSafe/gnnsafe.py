@@ -6,89 +6,15 @@ from torch_geometric.utils import degree
 from backbone import *
 import numpy as np
 
-class EnergyBase(nn.Module):
-    '''
-    pure energy-based model for ood detection
-    '''
-    def __init__(self, d, c, args):
-        super(EnergyBase, self).__init__()
-        if args.backbone == 'gcn':
-            self.encoder = GCN(in_channels=d,
-                        hidden_channels=args.hidden_channels,
-                        out_channels=c,
-                        num_layers=args.num_layers,
-                        dropout=args.dropout,
-                        use_bn=args.use_bn)
-        elif args.backbone == 'mlp':
-            self.encoder = MLP(in_channels=d, hidden_channels=args.hidden_channels,
-                        out_channels=c, num_layers=args.num_layers,
-                        dropout=args.dropout)
-        elif args.backbone == 'gat':
-            self.encoder = GAT(d, args.hidden_channels, c, num_layers=args.num_layers, dropout=args.dropout, use_bn=args.use_bn)
-        elif args.backbone == 'mixhop':
-            self.encoder = MixHop(d, args.hidden_channels, c, num_layers=args.num_layers, dropout=args.dropout)
-        elif args.backbone == 'gcnjk':
-            self.encoder = GCNJK(d, args.hidden_channels, c, num_layers=args.num_layers, dropout=args.dropout)
-        elif args.backbone == 'gatjk':
-            self.encoder = GATJK(d, args.hidden_channels, c, num_layers=args.num_layers, dropout=args.dropout)
-        else:
-            raise NotImplementedError
-
-    def reset_parameters(self):
-        self.encoder.reset_parameters()
-
-    def forward(self, dataset, device):
-        '''return predicted logits'''
-        x, edge_index = dataset.x.to(device), dataset.edge_index.to(device)
-        return self.encoder(x, edge_index)
-
-    def detect(self, dataset, node_idx, device, args):
-        '''return negative energy, a vector for all input nodes'''
-        logits = self.encoder(dataset.x.to(device), dataset.edge_index.to(device))[node_idx]
-        if args.dataset in ('proteins', 'ppi'):
-            logits = torch.stack([logits, torch.zeros_like(logits)], dim=2)
-            neg_energy = args.T * torch.logsumexp(logits / args.T, dim=-1).sum(dim=1)
-        else:
-            neg_energy = args.T * torch.logsumexp(logits / args.T, dim=-1)
-        return neg_energy
-
-    def loss_compute(self, dataset_ind, dataset_ood, criterion, device, args):
-        '''return loss for training'''
-        train_in_idx, train_ood_idx = dataset_ind.splits['train'], dataset_ood.node_idx
-
-        logits_in = self.encoder(dataset_ind.x.to(device), dataset_ind.edge_index.to(device))[train_in_idx]
-        logits_out = self.encoder(dataset_ood.x.to(device), dataset_ood.edge_index.to(device))[train_ood_idx]
-
-        if args.dataset in ('proteins', 'ppi'):
-            sup_loss = criterion(logits_in, dataset_ind.y[train_in_idx].to(device).to(torch.float))
-        else:
-            pred_in = F.log_softmax(logits_in, dim=1)
-            sup_loss = criterion(pred_in, dataset_ind.y[train_in_idx].squeeze(1).to(device))
-
-        if args.use_reg:
-            if args.dataset in ('proteins', 'ppi'):
-                logits_in = torch.stack([logits_in, torch.zeros_like(logits_in)], dim=2)
-                logits_out = torch.stack([logits_out, torch.zeros_like(logits_out)], dim=2)
-                energy_in = - args.T * torch.logsumexp(logits_in / args.T, dim=-1).sum(dim=1)
-                energy_out = - args.T * torch.logsumexp(logits_out / args.T, dim=-1).sum(dim=1)
-            else:
-                energy_in = - args.T * torch.logsumexp(logits_in / args.T, dim=-1)
-                energy_out = - args.T * torch.logsumexp(logits_out / args.T, dim=-1)
-            if energy_in.shape[0] != energy_out.shape[0]:
-                min_n = min(energy_in.shape[0], energy_out.shape[0])
-                energy_in = energy_in[:min_n]
-                energy_out = energy_out[:min_n]
-            # print(energy_in.mean().data, energy_out.mean().data)
-            reg_loss = torch.mean(F.relu(energy_in - args.m_in) ** 2 + F.relu(args.m_out - energy_out) ** 2)
-
-            loss = sup_loss + args.lamda * reg_loss
-        else:
-            loss = sup_loss
-
-        return loss
-
-
 class GNNSafe(nn.Module):
+    '''
+    The model class of energy-based models for out-of-distribution detection
+    The parameter args.use_reg and args.use_prop control the model versions:
+        Energy: args.use_reg = False, args.use_prop = False
+        Energy FT: args.use_reg = True, args.use_prop = False
+        GNNSafe: args.use_reg = False, args.use_prop = True
+        GNNSafe++ args.use_reg = True, args.use_prop = True
+    '''
     def __init__(self, d, c, args):
         super(GNNSafe, self).__init__()
         if args.backbone == 'gcn':

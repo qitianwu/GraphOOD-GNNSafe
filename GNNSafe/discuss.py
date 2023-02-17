@@ -185,4 +185,4 @@ else:
                 r = results[:, k * 3 + 2]
                 write_obj.write(f'OOD Test {k + 1} Final FPR: {r.mean():.2f} ± {r.std():.2f}\n')
             r = results[:, -1]
-            write_obj.write(f'In Test Score: {r.mean():.2f} ± {r.std():.2f}\n')
+            write_obj.write(f'IND Test Score: {r.mean():.2f} ± {r.std():.2f}\n')

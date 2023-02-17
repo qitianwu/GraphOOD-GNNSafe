@@ -38,9 +38,9 @@ def parser_add_main_args(parser):
     parser.add_argument('--use_prop', action='store_true', help='whether to use energy belief propagation')
     parser.add_argument('--K', type=int, default=2, help='number of layers for energy belief propagation')
     parser.add_argument('--alpha', type=float, default=0.5, help='weight for residual connection in propagation')
-    parser.add_argument('--noise', type=float, default=0., help='param for baseline ODIN and Mahalanobis')
 
     # baseline hyper
+    parser.add_argument('--noise', type=float, default=0., help='param for baseline ODIN and Mahalanobis')
 
     # training
     parser.add_argument('--weight_decay', type=float, default=1e-2)

@@ -163,7 +163,6 @@ def create_sbm_dataset(data, p_ii=1.5, p_ij=0.5):
     n = data.num_nodes
 
     d = data.edge_index.size(1) / data.num_nodes / (data.num_nodes - 1)
-    # h = homophily(data.edge_index, data.y)
     num_blocks = int(data.y.max()) + 1
     p_ii, p_ij = p_ii * d, p_ij * d
     block_size = n // num_blocks
@@ -258,14 +257,6 @@ def load_graph_dataset(data_dir, dataname, ood_type):
         torch_dataset = Coauthor(root=f'{data_dir}Coauthor',
                                  name='Physics', transform=transform)
         dataset = torch_dataset[0]
-    elif dataname == 'arxiv':
-        from ogb.nodeproppred import NodePropPredDataset
-
-        ogb_dataset = NodePropPredDataset(name='ogbn-arxiv', root=f'{data_dir}/ogb')
-        edge_index = torch.as_tensor(ogb_dataset.graph['edge_index'])
-        x = torch.as_tensor(ogb_dataset.graph['node_feat'])
-        label = torch.as_tensor(ogb_dataset.labels).squeeze(1)
-        dataset = Data(x=x, edge_index=edge_index, y=label)
     else:
         raise NotImplementedError
 
@@ -285,8 +276,6 @@ def load_graph_dataset(data_dir, dataname, ood_type):
             class_t = 4
         elif dataname == 'coauthor-cs':
             class_t = 4
-        elif dataname == 'arxiv':
-            class_t = 19
         label = dataset.y
 
         center_node_mask_ind = (label > class_t)
@@ -295,8 +284,6 @@ def load_graph_dataset(data_dir, dataname, ood_type):
 
         if dataname in ('cora', 'citeseer', 'pubmed'):
             split_idx = dataset.splits
-        elif dataname == 'arxiv':
-            split_idx = ogb_dataset.get_idx_split()
         if dataname in ('cora', 'citeseer', 'pubmed', 'arxiv'):
             tensor_split_idx = {}
             idx = torch.arange(label.size(0))
@@ -308,101 +295,12 @@ def load_graph_dataset(data_dir, dataname, ood_type):
 
         dataset_ood_tr = Data(x=dataset.x, edge_index=dataset.edge_index, y=dataset.y)
         dataset_ood_te = Data(x=dataset.x, edge_index=dataset.edge_index, y=dataset.y)
-        if dataname == 'arxiv':
-            center_node_mask_ood_tr = (label <= class_t) * (label > class_t-5)
-            center_node_mask_ood_te = (label <= class_t-5)
-        else:
-            center_node_mask_ood_tr = (label == class_t)
-            center_node_mask_ood_te = (label < class_t)
+
+        center_node_mask_ood_tr = (label == class_t)
+        center_node_mask_ood_te = (label < class_t)
         dataset_ood_tr.node_idx = idx[center_node_mask_ood_tr]
         dataset_ood_te.node_idx = idx[center_node_mask_ood_te]
     else:
         raise NotImplementedError
 
     return dataset_ind, dataset_ood_tr, dataset_ood_te
-
-# def load_arxiv_dataset(data_dir, class_range=[0,30], graph_partial=True):
-#     from ogb.nodeproppred import NodePropPredDataset
-#
-#     ogb_dataset = NodePropPredDataset(name='ogbn-arxiv', root=f'{data_dir}/ogb')
-#     edge_index = torch.as_tensor(ogb_dataset.graph['edge_index'])
-#     x = torch.as_tensor(ogb_dataset.graph['node_feat'])
-#     label = torch.as_tensor(ogb_dataset.labels).reshape(-1, 1)
-#
-#     class_min, class_max = class_range[0], class_range[1]
-#     center_node_mask = (label < class_max).squeeze(1) * (label >= class_min).squeeze(1)
-#     if graph_partial:
-#         all_node_mask = (label < class_max).squeeze(1)
-#         edge_index, _ = subgraph(all_node_mask, edge_index)
-#
-#     split_idx = ogb_dataset.get_idx_split()
-#     tensor_split_idx = {}
-#     idx = torch.arange(label.size(0))
-#     for key in split_idx:
-#         mask = torch.zeros(label.size(0), dtype=torch.bool)
-#         mask[torch.as_tensor(split_idx[key])] = True
-#         tensor_split_idx[key] = idx[mask * center_node_mask]
-#
-#     dataset = Data(x=x, edge_index=edge_index, y=label)
-#     dataset.splits = tensor_split_idx
-#     dataset.node_idx = idx[center_node_mask]
-#
-#     return dataset
-
-
-
-
-# def load_ppi_dataset(data_dir, graph_idx):
-#     transform = T.NormalizeFeatures()
-#     torch_dataset = PPI(root=f'{data_dir}PPI',
-#                               split='train', transform=transform)
-#     dataset = torch_dataset[int(graph_idx)]
-#     dataset.node_idx = torch.arange(dataset.num_nodes)
-#
-#     return dataset
-
-
-#
-# def load_amazon_dataset(data_dir, name):
-#     transform = T.NormalizeFeatures()
-#     if name == 'amazon-photo':
-#         torch_dataset = Amazon(root=f'{data_dir}Amazon',
-#                                name='Photo', transform=transform)
-#     elif name == 'amazon-computer':
-#         torch_dataset = Amazon(root=f'{data_dir}Amazon',
-#                                name='Computers', transform=transform)
-#     dataset = torch_dataset[0]
-#
-#     return dataset
-#
-#
-# def load_coauthor_dataset(data_dir, name):
-#     transform = T.NormalizeFeatures()
-#     if name == 'coauthor-cs':
-#         torch_dataset = Coauthor(root=f'{data_dir}Coauthor',
-#                                  name='CS', transform=transform)
-#     elif name == 'coauthor-physics':
-#         torch_dataset = Coauthor(root=f'{data_dir}Coauthor',
-#                                  name='Physics', transform=transform)
-#     dataset = torch_dataset[0]
-#
-#     return dataset
-#
-#
-# def load_ogb_dataset(data_dir, name):
-#     from ogb.nodeproppred import NodePropPredDataset
-#
-#     ogb_dataset = NodePropPredDataset(name=name, root=f'{data_dir}/ogb')
-#     edge_index = torch.as_tensor(ogb_dataset.graph['edge_index'])
-#     x = torch.as_tensor(ogb_dataset.graph['node_feat'])
-#     label = torch.as_tensor(ogb_dataset.labels).reshape(-1, 1)
-#
-#     def ogb_idx_to_tensor():
-#         split_idx = ogb_dataset.get_idx_split()
-#         tensor_split_idx = {key: torch.as_tensor(
-#             split_idx[key]) for key in split_idx}
-#         return tensor_split_idx
-#
-#     dataset = Data(x=x, edge_index=edge_index, y=label)
-#     dataset.load_fixed_splits = ogb_idx_to_tensor
-#     return dataset
