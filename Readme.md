@@ -6,6 +6,8 @@ The official implementation for ICLR23 paper "Energy-based Out-of-Distribution D
 
 [2023.02.09] We release the early version of our codes for reproducibility (more detailed info will be updated soon).
 
+[2023.02.16] We provide the implementation for all baseline models used in the experiments.
+
 ```bibtex
       @inproceedings{wu2023gnnsafe,
       title = {Energy-based Out-of-Distribution Detection for Graph Neural Networks},
@@ -22,33 +24,42 @@ The official implementation for ICLR23 paper "Energy-based Out-of-Distribution D
 - Pytorch 1.9.0
 - Pytorch Geometric 2.0.3
 
-More information about required packages is listed in `requirement.txt`.
+More information about required packages is listed in `requirements.txt`.
 
 ## Problem Settings
 
-The task of out-of-distribution (OOD) detection is defined as: Given a set of training data samples, 
-one needs to train a robust classifier that can effectively identify OOD samples (that have disparate distributions than training data) in the test set.
-In the meanwhile, the classifier should maintain decent classification performance on in-distribution testing data.
+Out-of-distribution (OOD) detection on graph-structured data: Given a set of training nodes (inter-connected as a graph), 
+one needs to train a robust classifier that can effectively identify OOD nodes (that have disparate distributions than training nodes) in the test set.
+In the meanwhile, the classifier should maintain decent classification performance on in-distribution testing nodes. Different from image data, OOD detection on graph data needs to handle data inter-dependence as compared below.
 
-There are two specific cases (with increasing difficulties) widely studied in the literature:
+<img width="600" alt="image" src="https://user-images.githubusercontent.com/22075007/219937529-f7d57dbc-ca9d-445f-ae27-f8c244cf9158.png">
 
-- ***OOD detection with training OOD exposure***: the training stage is exposed to extra OOD data (have disparate distributions from in-distribution training data),
-and the model is evaluated on ***unseen*** OOD data in test set (testing OOD data often stem from disparate distributions than training OOD data).
+OOD detection often has two specific problem settings, which we introduce in the following figures in comparison with standard supervised learning.
 
-- ***OOD detection without exposure***: the training is based on pure in-distribution data, and the model is evaluated on OOD data in test set.
+<img width="800" alt="image" src="https://user-images.githubusercontent.com/22075007/219937584-6627f89e-803f-49e6-b3ce-553db7529806.png">
+
+- ***Supervised learning:*** the training and testing are based on data from the same distribution, i.e., in-distribution (IND) data. We use IND-Tr/IND-Val/IND-Te to denote the train/valid/test sets of in-distribution data.
+
+- ***OOD detection w/o exposure***: the training is based on pure IND-Tr, and the model is evaluated by the performance of discriminating IND-Te and out-of-distribution (OOD) data in test set (short as OOD-Te).
+
+- ***OOD detection w/ OOD exposure***: besides IND-Tr, the training stage is exposed to extra OOD data (short as OOD-Tr),
+and the model is evaluated on OOD-Te and IND-Te.
+
 
 ## Datasets and Splits
 
-For comprehensive evaluation, we introduce new benchmark settings for OOD detection on graphs. 
-For each dataset, following the above protocols, we create three data portions:
+For comprehensive evaluation, we introduce new benchmark settings for OOD detection on graphs.  
+For , we follow different principles to create the data splits to introduce distribution shifts.
 
-- ***In-distribution data (IND)***: the data set used by traditional supervised learning. It is further split into training/validation/testing subsets (short as INDTr/INDVal/INDTe) for training and evaluation of the classifier.
+<img width="900" alt="image" src="https://user-images.githubusercontent.com/22075007/219937890-d0739791-8e5b-4dda-b4ea-8f5653728b10.png">
 
-- ***OOD data for training (OODTr)***: the data set used as training OOD exposure and for computing the regularization loss for the OOD detector.
-
-- ***OOD data for testing (OODTe)***: the data set used for evaluating the OOD detection model. In specific, the evaluation is based on discriminating the INDTe and OODTe.
 
 Due to different properties of different datasets, we use different ways for splitting.
+
+- **Twitch** (multi-graph dataset): This dataset contains multiple sub-graphs. We use subgraph DE as IND, subgraph EN as OODTr and subgraphs ES, FR, RU as OODTe.
+
+- **Arxiv** (dataset with context info): This dataset is a single graph where each node has a time label, i.e., when the paper is published.
+ We follow [1] using the time as domain information for splitting nodes into IND, OODTr and OODTe.
 
 - **Cora/Amazon/Coauthor** (standard dataset): Each of these datasets contain one single graph. We use the original data as IND, and follow the public splits for train/valid/test partition.
 As for OOD data, we modified the original dataset to obtain OODTr and OODTe, with three different ways:
@@ -57,10 +68,7 @@ As for OOD data, we modified the original dataset to obtain OODTr and OODTe, wit
     - Feature interpolation: use random interpolation to create node features for OOD data. 
     - Label leave-out: use nodes with partial classes as IND and leave out others for OODTr and OODTe.
 
-- **Twitch** (multi-graph dataset): This dataset contains multiple sub-graphs. We use subgraph DE as IND, subgraph EN as OODTr and subgraphs ES, FR, RU as OODTe.
 
-- **Arxiv** (dataset with context info): This dataset is a single graph where each node has a time label, i.e., when the paper is published.
- We follow [1] using the time as domain information for splitting nodes into IND, OODTr and OODTe.
 
 ## Model Implementation
 
