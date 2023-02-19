@@ -70,7 +70,7 @@ else:
 ### load method ###
 if args.method == 'msp':
     model = MSP(d, c, args).to(device)
-elif args.method == 'gnnsafe':
+elif args.method in 'gnnsafe':
     model = GNNSafe(d, c, args).to(device)
 elif args.method == 'OE':
     model = OE(d, c, args).to(device)

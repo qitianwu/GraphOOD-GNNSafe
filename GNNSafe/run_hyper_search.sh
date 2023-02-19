@@ -15,8 +15,8 @@ do
   do
     for l in ${lamda_space[@]}
     do
-      python main.py --method energymodel --backbone $gnn --dataset $data --ood_type $type --mode detect --use_bn --lamda $l --T 1.0 --m_in $m_in --m_out $m_out --device $dev
-      python main.py --method energyprop --backbone $gnn --dataset $data --ood_type $type --mode detect --use_bn --lamda $l --T 1.0 --m_in $m_in --m_out $m_out --device $dev
+      python main.py --method gnnsafe --backbone $gnn --dataset $data --ood_type $type --mode detect --use_bn --use_reg --lamda $l --T 1.0 --m_in $m_in --m_out $m_out --device $dev
+      python main.py --method gnnsafe --backbone $gnn --dataset $data --ood_type $type --mode detect --use_bn --use_prop --use_reg --lamda $l --T 1.0 --m_in $m_in --m_out $m_out --device $dev
     done
   done
 done

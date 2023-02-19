@@ -151,9 +151,9 @@ if not os.path.exists(f'results/discuss'):
     os.makedirs(f'results/discuss')
 if args.dis_type == 'vis_energy':
     if args.use_prop:
-        name = 'gnnsafe_use_prop_use_reg' if args.use_reg else 'gnnsafe_use_prop_no_reg'
+        name = 'gnnsafe++' if args.use_reg else 'gnnsafe'
     else:
-        name = 'gnnsafe_no_prop_use_reg' if args.use_reg else 'gnnsafe_no_prop_no_reg'
+        name = 'gnnsafe++ w/o prop' if args.use_reg else 'gnnsafe w/o prop'
     filename = 'results/vis_scores/' + name + '.csv'
     print(f"Saving results to {filename}")
     with open(f"{filename}", 'a+') as write_obj:

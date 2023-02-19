@@ -148,9 +148,9 @@ def save_result(results, args):
 
     if args.method == 'gnnsafe':
         if args.use_prop:
-            name = 'GNNSafe++' if args.use_reg else 'GNNSafe'
+            name = 'gnnsafe++' if args.use_reg else 'gnnsafe'
         else:
-            name = 'Energy FT' if args.use_reg else 'Energy'
+            name = 'gnnsafe++ w/o prop' if args.use_reg else 'gnnsafe w/o prop'
     else:
         name = args.method
 

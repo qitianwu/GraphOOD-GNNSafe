@@ -1,8 +1,7 @@
 ### Scripts to run baselines including ODIN, OE and Mahalanobis
-### For
 
 # ODIN
-for data in "amazon-photo" "twitch" "cora" "coauthor-cs"
+for data in "amazon-photo" "cora" "coauthor-cs"
 do
   for ood in "feature" "structure" "label"
   do
@@ -17,7 +16,7 @@ do
 done
 
 # OE
-for data in "amazon-photo" "twitch" "cora" "coauthor-cs"
+for data in "amazon-photo" "cora" "coauthor-cs"
 do
   for ood in "feature" "structure" "label"
   do
@@ -26,7 +25,7 @@ do
 done
 
 # Mahalanobis
-for data in "amazon-photo" "twitch" "cora" "coauthor-cs"
+for data in "amazon-photo" "cora" "coauthor-cs"
 do
   for ood in "feature" "structure" "label"
   do
