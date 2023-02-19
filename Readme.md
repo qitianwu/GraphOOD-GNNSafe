@@ -50,7 +50,7 @@ and the model is evaluated on OOD-Te and IND-Te.
 
 For comprehensive evaluation, we introduce new benchmarks for OOD detection on graphs, with regard to distribution shifts of real-world and synthetic settings. Generally, graph datasets can be divided into single-graph and multi-graph datasets, and we follow the principles in [1] for data splits as shown below.
 
-<img width="900" alt="image" src="https://user-images.githubusercontent.com/22075007/219937890-d0739791-8e5b-4dda-b4ea-8f5653728b10.png">
+<img width="700" alt="image" src="https://user-images.githubusercontent.com/22075007/219937890-d0739791-8e5b-4dda-b4ea-8f5653728b10.png">
 
 For five datasets in our experiments, due to different properties, the specific data splitting ways are described below. One could refer to `GNNSafe/dataset.py` for detailed implementation of the above data splits.
 
@@ -70,7 +70,10 @@ As for OOD data, we modified the original dataset to obtain OODTr and OODTe, wit
 
 ## Key Results
 
-<img width="593" alt="image" src="https://user-images.githubusercontent.com/22075007/219939865-458145a0-a85b-4948-9d56-5f2d821e2777.png">
+<img width="700" alt="image" src="https://user-images.githubusercontent.com/22075007/219940154-fbd5cc2c-508e-437c-90b4-d485277f2152.png">
+
+<img width="700" alt="image" src="https://user-images.githubusercontent.com/22075007/219940165-425d6ee9-0ca3-4837-9c92-e14ccd63bd1c.png">
+
 
 ## Implementation Details
 
