@@ -46,50 +46,55 @@ OOD detection often has two specific problem settings, which we introduce in the
 and the model is evaluated on OOD-Te and IND-Te.
 
 
-## Datasets and Splits
+## Data Splits and Protocols
 
-For comprehensive evaluation, we introduce new benchmark settings for OOD detection on graphs.  
-For , we follow different principles to create the data splits to introduce distribution shifts.
+For comprehensive evaluation, we introduce new benchmarks for OOD detection on graphs, with regard to distribution shifts of real-world and synthetic settings. Generally, graph datasets can be divided into single-graph and multi-graph datasets, and we follow the principles in [1] for data splits as shown below.
 
 <img width="900" alt="image" src="https://user-images.githubusercontent.com/22075007/219937890-d0739791-8e5b-4dda-b4ea-8f5653728b10.png">
 
+For five datasets in our experiments, due to different properties, the specific data splitting ways are described below. One could refer to `GNNSafe/dataset.py` for detailed implementation of the above data splits.
 
-Due to different properties of different datasets, we use different ways for splitting.
+- **Twitch** (multi-graph dataset): This dataset contains multiple sub-graphs. We use subgraph DE as IND, subgraph EN as OODTr and subgraphs ES, FR, RU as OODTe. The IND is randomly split into IND-Tr/IND-Val/IND-Te with 1:1:8 ratio.
 
-- **Twitch** (multi-graph dataset): This dataset contains multiple sub-graphs. We use subgraph DE as IND, subgraph EN as OODTr and subgraphs ES, FR, RU as OODTe.
+- **Arxiv** (single-graph dataset with context info): This dataset is a single graph where each node has a time label, i.e., when the paper is published.
+ We use the time as domain information for splitting nodes into IND, OODTr and OODTe. The IND nodes are randomly split into IND-Tr/IND-Val/IND-Te with 1:1:8 ratio.
 
-- **Arxiv** (dataset with context info): This dataset is a single graph where each node has a time label, i.e., when the paper is published.
- We follow [1] using the time as domain information for splitting nodes into IND, OODTr and OODTe.
-
-- **Cora/Amazon/Coauthor** (standard dataset): Each of these datasets contain one single graph. We use the original data as IND, and follow the public splits for train/valid/test partition.
+- **Cora/Amazon/Coauthor** (single-graph dataset w/o context info): Each of these datasets contain one single graph and no explicit domain label is given. We use the original data as IND, and follow the public splits for train/valid/test partition.
 As for OOD data, we modified the original dataset to obtain OODTr and OODTe, with three different ways:
 
     - Structure manipulation: adopt stochastic block model to randomly generate a graph for OOD data.
     - Feature interpolation: use random interpolation to create node features for OOD data. 
     - Label leave-out: use nodes with partial classes as IND and leave out others for OODTr and OODTe.
 
+***Evalution Metrics***: the OOD detection performance is measured by AUROC, AUPR, FPR95 for discriminating IND-Te and OOD-Te.
 
+## Key Results
 
-## Model Implementation
+<img width="593" alt="image" src="https://user-images.githubusercontent.com/22075007/219939865-458145a0-a85b-4948-9d56-5f2d821e2777.png">
 
-There are four versions of our proposed model used in the experiments:
+## Implementation Details
 
-- `gnn_no_prop_no_reg` (***Energy*** in paper): the basic model using energy-based OOD detector
+The folder `GNNSafe/` contains all codes for our model and baselines `Energy`, `OE`, `ODIN`, `Mahalanobis`. The `GNNSafe/main.py` implements the pipeline for training and evaluation of these methods under our protocols.
 
-- `gnn_no_prop_use_reg` (***Energy FT*** in paper): the basic model with regularization loss on extra OOD exposure (i.e., using OODTr)
+- For our model `GNNSafe` and `Energy`, the model class is implemented in `GNNSafe/gnnsafe.py` and there are four versions of the model:
 
-- `gnn_use_prop_no_reg` (***GNNSafe*** in paper): the basic model plus energy belief propagation
+     - `gnnsafe` (***GNNSafe*** in paper): the energy-based OOD detector with energy belief propagation
 
-- `gnn_use_prop_use_reg` (***GNNSafe++*** in paper): the final model using both regularization and propagation
+     - `gnnsafe++` (***GNNSafe++*** in paper): the energy-based OOD detector with energy propagation and regularization loss on OOD-Tr.
 
-Since our model is agnostic to specific GNN architectures, we implement various off-the-shelf GNNs as the classifier backbone
-(including MLP/GCN/GAT/JKNet/MixHop)
+     - `gnnsafe w/o prop` (***Energy*** in paper): the energy-based OOD detector w/o propagation
+
+     - `gnnsafe++ w/o prop` (***Energy FT*** in paper): the energy-based OOD detector w/o propagation trained with regularization loss on OOD-Tr.
+  
+- The running scripts for training and evaluation are in `GNNSafe/run.sh`. 
+
+The folder `GKDE&GPN` contains all codes for baselines `GKDE` and `GPN`. The `GKDE&GPN/main.py` implements the pipeline for training and evaluation of the two methods under our protocols. The running scripts are in `GKDE&GPN/run_gkde_gpn.sh`.
 
 ## How to run the code
 
-1. Install the required packages according to `requirements.txt`.
+1. Create a conda environment and install the required packages according to `requirements.txt`.
 
-2. The datasets we used are publicly available from Pytorch Geometric and OGB Package, and will be automatically downloaded when running our training scripts.
+2. Create a folder `../data` as data directory. The datasets we used are publicly available from Pytorch Geometric and OGB Package, and will be automatically downloaded when running our training scripts.
 
 3. Follow the guidelines below for running the codes for different purposes.
 
@@ -115,7 +120,7 @@ and obtain results for energy visualization (Fig. 1 in paper) in `run_visualize.
 
 1. Our pipeline also supports supervised node classification by using `--mode classify`. For example,
 ```shell 
-    # MaxLogits with GCN on Cora
+    # GCN on Cora
     python main.py --method msp --backbone gcn --dataset cora --ood_type structure --mode classify --use_bn --device 1
     python main.py --method msp --backbone mlp --dataset cora --ood_type structure --mode classify --use_bn --device 1
 ```
