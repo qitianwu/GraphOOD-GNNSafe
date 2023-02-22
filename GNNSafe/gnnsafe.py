@@ -105,6 +105,9 @@ class GNNSafe(nn.Module):
             if args.use_prop: # use energy belief propagation
                 energy_in = self.propagation(energy_in, edge_index_in, args.K, args.alpha)[train_in_idx]
                 energy_out = self.propagation(energy_out, edge_index_out, args.K, args.alpha)[train_ood_idx]
+            else:
+                energy_in = energy_in[train_in_idx]
+                energy_out = energy_out[train_in_idx]
 
             # truncate to have the same length
             if energy_in.shape[0] != energy_out.shape[0]:

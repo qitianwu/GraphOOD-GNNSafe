@@ -1,0 +1,72 @@
+cora structure -9.0 10.0
+OOD Test 1 Final AUROC: 80.41 ± nan OOD Test 1 Final AUPR: 72.06 ± nan OOD Test 1 Final FPR: 96.53 ± nan
+In Test Score: 75.40 ± nan
+cora structure -9.0 5.0
+OOD Test 1 Final AUROC: 85.25 ± nan OOD Test 1 Final AUPR: 80.23 ± nan OOD Test 1 Final FPR: 93.46 ± nan
+In Test Score: 76.80 ± nan
+cora structure -9.0 2.0
+OOD Test 1 Final AUROC: 86.89 ± nan OOD Test 1 Final AUPR: 82.18 ± nan OOD Test 1 Final FPR: 84.64 ± nan
+In Test Score: 76.60 ± nan
+cora structure -9.0 0.0
+OOD Test 1 Final AUROC: 85.63 ± nan OOD Test 1 Final AUPR: 80.74 ± nan OOD Test 1 Final FPR: 88.48 ± nan
+In Test Score: 77.00 ± nan
+cora structure -9.0 -1.0
+OOD Test 1 Final AUROC: 84.40 ± nan OOD Test 1 Final AUPR: 79.35 ± nan OOD Test 1 Final FPR: 90.21 ± nan
+In Test Score: 77.50 ± nan
+cora structure -9.0 -2.0
+OOD Test 1 Final AUROC: 83.83 ± nan OOD Test 1 Final AUPR: 78.41 ± nan OOD Test 1 Final FPR: 90.58 ± nan
+In Test Score: 78.00 ± nan
+cora structure -9.0 -3.0
+OOD Test 1 Final AUROC: 83.28 ± nan OOD Test 1 Final AUPR: 77.48 ± nan OOD Test 1 Final FPR: 90.32 ± nan
+In Test Score: 78.30 ± nan
+cora structure -9.0 -4.0
+OOD Test 1 Final AUROC: 82.88 ± nan OOD Test 1 Final AUPR: 76.68 ± nan OOD Test 1 Final FPR: 90.44 ± nan
+In Test Score: 77.80 ± nan
+cora structure -7.0 10.0
+OOD Test 1 Final AUROC: 79.25 ± nan OOD Test 1 Final AUPR: 69.71 ± nan OOD Test 1 Final FPR: 96.49 ± nan
+In Test Score: 76.40 ± nan
+cora structure -7.0 5.0
+OOD Test 1 Final AUROC: 84.48 ± nan OOD Test 1 Final AUPR: 78.47 ± nan OOD Test 1 Final FPR: 93.98 ± nan
+In Test Score: 77.40 ± nan
+cora structure -7.0 2.0
+OOD Test 1 Final AUROC: 88.69 ± nan OOD Test 1 Final AUPR: 83.41 ± nan OOD Test 1 Final FPR: 77.70 ± nan
+In Test Score: 76.90 ± nan
+cora structure -7.0 0.0
+OOD Test 1 Final AUROC: 88.24 ± nan OOD Test 1 Final AUPR: 82.23 ± nan OOD Test 1 Final FPR: 77.88 ± nan
+In Test Score: 76.80 ± nan
+cora structure -7.0 -1.0
+OOD Test 1 Final AUROC: 86.77 ± nan OOD Test 1 Final AUPR: 80.79 ± nan OOD Test 1 Final FPR: 84.75 ± nan
+In Test Score: 77.50 ± nan
+cora structure -7.0 -2.0
+OOD Test 1 Final AUROC: 85.69 ± nan OOD Test 1 Final AUPR: 79.40 ± nan OOD Test 1 Final FPR: 88.74 ± nan
+In Test Score: 77.20 ± nan
+cora structure -7.0 -3.0
+OOD Test 1 Final AUROC: 84.96 ± nan OOD Test 1 Final AUPR: 78.27 ± nan OOD Test 1 Final FPR: 89.14 ± nan
+In Test Score: 76.90 ± nan
+cora structure -7.0 -4.0
+OOD Test 1 Final AUROC: 84.60 ± nan OOD Test 1 Final AUPR: 77.07 ± nan OOD Test 1 Final FPR: 89.36 ± nan
+In Test Score: 77.50 ± nan
+cora structure -5.0 10.0
+OOD Test 1 Final AUROC: 77.60 ± nan OOD Test 1 Final AUPR: 66.35 ± nan OOD Test 1 Final FPR: 96.97 ± nan
+In Test Score: 78.00 ± nan
+cora structure -5.0 5.0
+OOD Test 1 Final AUROC: 83.46 ± nan OOD Test 1 Final AUPR: 77.48 ± nan OOD Test 1 Final FPR: 93.13 ± nan
+In Test Score: 77.70 ± nan
+cora structure -5.0 2.0
+OOD Test 1 Final AUROC: 89.88 ± nan OOD Test 1 Final AUPR: 83.59 ± nan OOD Test 1 Final FPR: 65.44 ± nan
+In Test Score: 77.30 ± nan
+cora structure -5.0 0.0
+OOD Test 1 Final AUROC: 92.44 ± nan OOD Test 1 Final AUPR: 84.22 ± nan OOD Test 1 Final FPR: 37.19 ± nan
+In Test Score: 76.60 ± nan
+cora structure -5.0 -1.0
+OOD Test 1 Final AUROC: 90.32 ± nan OOD Test 1 Final AUPR: 81.72 ± nan OOD Test 1 Final FPR: 56.35 ± nan
+In Test Score: 76.30 ± nan
+cora structure -5.0 -2.0
+OOD Test 1 Final AUROC: 87.72 ± nan OOD Test 1 Final AUPR: 79.31 ± nan OOD Test 1 Final FPR: 76.92 ± nan
+In Test Score: 75.90 ± nan
+cora structure -5.0 -3.0
+OOD Test 1 Final AUROC: 86.46 ± nan OOD Test 1 Final AUPR: 77.82 ± nan OOD Test 1 Final FPR: 81.76 ± nan
+In Test Score: 76.20 ± nan
+cora structure -5.0 -4.0
+OOD Test 1 Final AUROC: 86.26 ± nan OOD Test 1 Final AUPR: 77.41 ± nan OOD Test 1 Final FPR: 82.87 ± nan
+In Test Score: 76.10 ± nan

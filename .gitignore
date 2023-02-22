@@ -16,7 +16,7 @@ __pycache__/
 *.pkl
 
 # Results
-**/results/
+#**/results/
 /GKDE & GPN/
 
 # SLURM script
