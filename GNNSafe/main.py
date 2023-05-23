@@ -142,4 +142,5 @@ results = logger.print_statistics()
 
 
 ### Save results ###
-save_result(results, args)
+if args.mode == 'detect':
+    save_result(results, args)
